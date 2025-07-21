@@ -1,0 +1,113 @@
+/* 商品情報のコンテナ */
+.item-data {
+    width: 80%;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 商品名 */
+.item-data h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* 商品画像 */
+.item-data img {
+    display: block;
+    margin: 20px auto;
+    max-width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+/* 商品説明 */
+.item-data p {
+    margin: 10px 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* ボタンのスタイル */
+.btn {
+    display: inline-block;
+    background-color: #ff5a5f;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.btn:hover {
+    background-color: #e0454d;
+}
+
+/* コメントエリア */
+.comment {
+    margin: 15px 0;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.comment strong {
+    font-size: 14px;
+    color: #555;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    resize: none;
+}
+
+textarea:focus {
+    border-color: #ff5a5f;
+    outline: none;
+}
+
+/* 戻るリンク */
+a {
+    display: inline-block;
+    margin-top: 20px;
+    color: #ff5a5f;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* フリマアプリ風の星アイコン */
+.star-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 30px;
+    transition: transform 0.3s ease;
+}
+
+.star-btn span {
+    color: #ccc;
+    transition: color 0.3s ease;
+}
+
+.star-btn.favorited span {
+    color: #ff9800;
+}
+
+.comment-icon {
+    font-size: 30px;
+}
