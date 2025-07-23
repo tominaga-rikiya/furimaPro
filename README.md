@@ -1,14 +1,81 @@
-# 環境構築
+# furima(フリマアプリ)
 
-1. Dockerを起動する
+## 概要
+本プロジェクトは、ユーザーが商品を売買できるフリマアプリです。  
+出品機能、購入機能、お気に入り機能、コメント機能などを備えています。
 
-2. プロジェクト直下で、以下のコマンドを実行する
+## 環境構築
+**Dockerビルド**
+1. `git clone git@github.com:tominaga-rikiya/furima.git`
+2. DockerDesktopアプリを立ち上げる
+3. `docker-compose up -d --build`
 
+> *MacのM1・M2チップのPCの場合、`no matching manifest for linux/arm64/v8 in the manifest list entries`のメッセージが表示されビルドができないことがあります。
+エラーが発生する場合は、docker-compose.ymlファイルの「mysql」内に「platform」の項目を追加で記載してください*
+``` bash
+mysql:
+    platform: linux/x86_64(この文追加)
+    image: mysql:8.0.26
+    environment:
 ```
-make init
+
+**Laravel環境構築**
+1. `docker-compose exec php bash`
+2. `composer install`
+3. 「.env.example」ファイルを 「.env」ファイルに命名を変更。または、新しく.envファイルを作成
+4. .envに以下の環境変数を追加
+``` text
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel_db
+DB_USERNAME=laravel_user
+DB_PASSWORD=laravel_pass
+```
+5. アプリケーションキーの作成
+``` bash
+php artisan key:generate
 ```
 
-※Makefileは実行するコマンドを省略することができる便利な設定ファイルです。コマンドの入力を効率的に行えるようになります。<br>
+6. マイグレーションの実行
+``` bash
+php artisan migrate
+```
+
+7. シーディングの実行
+``` bash
+php artisan db:seed
+```
+
+8. シンボリックリンク実行
+``` bash
+php artisan storage:link
+```
+9. 画像表示
+mkdir ./src/storage/app/public/img
+mv ./src/public/img/copy_storage_img/*.jpg ./src/storage/app/public/img
+
+*http://localhostで権限によるエラーが発生する場合はstorage/logs/laravel.logの権限を変更*
+``` bash
+chmod -R 777 storage
+chown -R www-data:www-data storage  # WSL なら「www-data」ではなく「$USER」でもOK
+```
+
+*5.6と続けた場合エラーが出たら、もう一度サービスを再起動*
+``` bash
+docker-compose down
+docker-compose up -d
+```
+
+## 使用技術(実行環境)
+- PHP8.3.0
+- Laravel8.83.27
+- MySQL8.0.26
+
+## URL
+- 開発環境：http://localhost/
+- phpMyAdmin:：http://localhost:8080/
+- Stripe:https://docs.stripe.com/payments/checkout?locale=ja-JP
 
 ## メール認証
 mailtrapというツールを使用しています。<br>
@@ -27,100 +94,6 @@ MAIL_FROM_ADDRESSは任意のメールアドレスを入力してください。
 STRIPE_PUBLIC_KEY="パブリックキー"
 STRIPE_SECRET_KEY="シークレットキー"
 ```
-
-以下のリンクは公式ドキュメントです。<br>
-https://docs.stripe.com/payments/checkout?locale=ja-JP
-## テーブル仕様
-### usersテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| id | bigint | ◯ |  | ◯ |  |
-| name | varchar(255) |  |  | ◯ |  |
-| email | varchar(255) |  | ◯ | ◯ |  |
-| email_verified_at | timestamp |  |  |  |  |
-| password | varchar(255) |  |  | ◯ |  |
-| remember_token | varchar(100) |  |  |  |  |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
-
-### profilesテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| id | bigint | ◯ |  | ◯ |  |
-| user_id | bigint |  |  | ◯ | users(id) |
-| img_url | varchar(255) |  |  |  |  |
-| postcode | varchar(255) |  |  | ◯ |  |
-| address | varchar(255) |  |  | ◯ |  |
-| building | varchar(255) |  |  |  |  |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
-
-### itemsテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| id | bigint | ◯ |  | ◯ |  |
-| user_id | bigint |  |  | ◯ | users(id) |
-| condition_id | bigint |  |  | ◯ | condtions(id) |
-| name | varchar(255) |  |  | ◯ |  |
-| price | int |  |  | ◯ |  |
-| brand | varchar(255) |  |  |  |  |
-| description | varchar(255) |  |  | ◯ |  |
-| img_url | varchar(255) |  |  | ◯ |  |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
-
-### commentsテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| id | bigint | ◯ |  | ◯ |  |
-| user_id | bigint |  |  | ◯ | users(id) |
-| item_id | bigint |  |  | ◯ | items(id) |
-| comment | varchar(255) |  |  | ◯ |  |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
-
-### likesテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| user_id | bigint |  | ◯(item_idとの組み合わせ) | ◯ | users(id) |
-| item_id | bigint |  | ◯(user_idとの組み合わせ) | ◯ | items(id) |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
-
-### sold_itemsテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| user_id | bigint |  |  | ◯ | users(id) |
-| item_id | bigint |  |  | ◯ | items(id) |
-| sending_postcode | varchar(255) |  |  | ◯ |  |
-| sending_address | varchar(255) |  |  | ◯ |  |
-| sending_building | varchar(255) |  |  |  |  |
-| created_at | created_at |  |  |  |  |
-| updated_at | updated_at |  |  |  |  |
-
-### category_itemsテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| item_id | bigint |  | ◯(category_idとの組み合わせ) | ◯ | items(id) |
-| category_id | bigint |  | ◯(item_idとの組み合わせ) | ◯ | categories(id) |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
-
-### categoriesテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| id | bigint | ◯ |  | ◯ |  |
-| category | varchar(255) |  |  | ◯ |  |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
-
-### conditionsテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
-| id | bigint | ◯ |  | ◯ |  |
-| condition | varchar(255) |  |  | ◯ |  |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
 
 ## ER図
 ![alt](ER.png)
@@ -150,7 +123,4 @@ php artisan migrate:fresh --env=testing
 ```
 ※.env.testingにもStripeのAPIキーを設定してください。  
 
-## 生徒様へ
-普段よりお世話になっております。  
-こちらの模範解答に関するご質問、またこちらに不備を見つけた、などの際は気兼ねなく申し付けください。
 # furimaPro
