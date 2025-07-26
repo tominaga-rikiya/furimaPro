@@ -108,4 +108,3 @@ name: 一般ユーザ3(紐づけなし)
 email: general3@gmail.com  
 password: password  
 -------------------------
-# furimaPro

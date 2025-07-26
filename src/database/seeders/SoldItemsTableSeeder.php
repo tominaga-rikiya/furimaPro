@@ -8,17 +8,12 @@ use Carbon\Carbon;
 
 class SoldItemsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $params = [
             [
                 'user_id' => 1,  
-                'item_id' => 2, 
+                'item_id' => 2,  
                 'sending_postcode' => '1500043',
                 'sending_address' => '東京都渋谷区道玄坂1-12-1',
                 'sending_building' => 'シブヤマークシティ',
