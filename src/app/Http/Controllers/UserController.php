@@ -103,12 +103,20 @@ class UserController extends Controller
 
     private function getTransactionData($user)
     {
-        $transactions = SoldItem::with(['item', 'item.user', 'user', 'messages'])
-            ->where('is_completed', false)
+        $transactions = SoldItem::with(['item', 'item.user', 'user', 'messages', 'ratings'])
             ->where(function ($query) use ($user) {
                 $query->where('user_id', $user->id)
                     ->orWhereHas('item', function ($q) use ($user) {
                         $q->where('user_id', $user->id);
+                    });
+            })
+            ->where(function ($query) use ($user) {
+                $query->where('is_completed', false)
+                    ->orWhere(function ($subQuery) use ($user) {
+                        $subQuery->where('is_completed', true)
+                            ->whereDoesntHave('ratings', function ($ratingQuery) use ($user) {
+                                $ratingQuery->where('from_user_id', $user->id);
+                            });
                     });
             })
             ->get()
@@ -145,35 +153,46 @@ class UserController extends Controller
     private function getUnreadMessageData($user)
     {
         $totalCount = Message::whereHas('soldItem', function ($query) use ($user) {
-            $query->where('is_completed', false)
-                ->where(function ($q) use ($user) {
-                    $q->where('user_id', $user->id)
-                        ->orWhereHas('item', function ($subQ) use ($user) {
-                            $subQ->where('user_id', $user->id);
-                        });
-                });
+            $query->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereHas('item', function ($subQ) use ($user) {
+                        $subQ->where('user_id', $user->id);
+                    });
+            });
         })
             ->where('user_id', '!=', $user->id)
             ->where('is_read', false)
             ->count();
 
         $hasNew = Message::whereHas('soldItem', function ($query) use ($user) {
-            $query->where('is_completed', false)
-                ->where(function ($q) use ($user) {
-                    $q->where('user_id', $user->id)
-                        ->orWhereHas('item', function ($subQ) use ($user) {
-                            $subQ->where('user_id', $user->id);
-                        });
-                });
+            $query->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhereHas('item', function ($subQ) use ($user) {
+                        $subQ->where('user_id', $user->id);
+                    });
+            });
         })
             ->where('user_id', '!=', $user->id)
             ->where('is_read', false)
             ->where('created_at', '>=', now()->subMinutes(5))
             ->exists();
 
+        $pendingRatingsCount = SoldItem::where('is_completed', true)
+            ->where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->orWhereHas('item', function ($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    });
+            })
+            ->whereDoesntHave('ratings', function ($query) use ($user) {
+                $query->where('from_user_id', $user->id);
+            })
+            ->count();
+
         return [
             'total_count' => $totalCount,
-            'has_new' => $hasNew
+            'has_new' => $hasNew,
+            'pending_ratings' => $pendingRatingsCount
         ];
     }
 
@@ -202,7 +221,8 @@ class UserController extends Controller
 
         return response()->json([
             'unread_count' => $unreadData['total_count'],
-            'has_new_messages' => $unreadData['has_new']
+            'has_new_messages' => $unreadData['has_new'],
+            'pending_ratings' => $unreadData['pending_ratings']
         ]);
     }
 

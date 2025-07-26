@@ -49,6 +49,21 @@ class SoldItem extends Model
         return $this->hasOne(Rating::class);
     }
 
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function hasUserRated($userId)
+    {
+        return $this->ratings()->where('from_user_id', $userId)->exists();
+    }
+
+    public function getUserRating($userId)
+    {
+        return $this->ratings()->where('from_user_id', $userId)->first();
+    }
+
     public function unreadMessagesCount($userId)
     {
         return $this->messages()
@@ -58,6 +73,11 @@ class SoldItem extends Model
     }
 
     public function isUserInTransaction($userId)
+    {
+        return $this->user_id === $userId || $this->item->user_id === $userId;
+    }
+
+    public function isParticipant($userId)
     {
         return $this->user_id === $userId || $this->item->user_id === $userId;
     }

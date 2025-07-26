@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TransactionCompletedMail;
 use App\Models\SoldItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +18,46 @@ class TransactionController extends Controller
             abort(403, 'アクセス権限がありません');
         }
 
-        $soldItem->load(['item.user', 'rating.fromUser', 'rating.toUser']);
+        $otherUser = $soldItem->user_id === Auth::id()
+            ? $soldItem->item->user
+            : $soldItem->user;
+
+        $item = $soldItem->item()->with(['user', 'condition'])->first();
+
+        $messages = $soldItem->messages()
+            ->with('user')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $otherTransactions = SoldItem::with(['item', 'latestMessage'])
+            ->where('id', '!=', $soldItem->id)
+            ->where('is_completed', false)
+            ->where(function ($query) {
+                $query->where('user_id', Auth::id())
+                    ->orWhereHas('item', function ($q) {
+                        $q->where('user_id', Auth::id());
+                    });
+            })
+            ->get()
+            ->sortByDesc(function ($transaction) {
+                return $transaction->latestMessage ? $transaction->latestMessage->created_at : $transaction->created_at;
+            });
+
+        $soldItem->messages()
+            ->where('user_id', '!=', Auth::id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
         $userRole = ($soldItem->user_id === Auth::id()) ? 'buyer' : 'seller';
 
-        return view('transactions.show', compact('soldItem', 'userRole'));
+        return view('chat', compact(
+            'soldItem',
+            'item',
+            'messages',
+            'otherTransactions',
+            'userRole',
+            'otherUser'
+        ));
     }
 
     public function complete(Request $request, SoldItem $soldItem)
@@ -44,7 +83,16 @@ class TransactionController extends Controller
                 return redirect()->back()->with('error', '既に取引は完了済みです');
             }
 
-            $soldItem->update(['is_completed' => true]);
+            DB::beginTransaction();
+
+            $soldItem->update([
+                'is_completed' => true,
+                'completed_at' => now()
+            ]);
+
+            $this->sendTransactionCompletedMail($soldItem);
+
+            DB::commit();
 
             if ($request->ajax()) {
                 return response()->json([
@@ -56,6 +104,7 @@ class TransactionController extends Controller
             return redirect()->route('transactions.show', $soldItem)
                 ->with('success', '取引が完了しました');
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Transaction completion error: ' . $e->getMessage());
 
             if ($request->ajax()) {
@@ -122,5 +171,45 @@ class TransactionController extends Controller
             'userRole',
             'otherUser'
         ));
+    }
+
+    private function sendTransactionCompletedMail(SoldItem $soldItem)
+    {
+        try {
+            $soldItem->load(['item.user']);
+            $buyer = Auth::user();
+
+            if (!$soldItem->item) {
+                throw new \Exception('商品データが見つかりません');
+            }
+
+            if (!$soldItem->item->user) {
+                throw new \Exception('販売者データが見つかりません');
+            }
+
+            if (!$soldItem->item->user->email) {
+                throw new \Exception('販売者のメールアドレスが設定されていません');
+            }
+
+            Log::info('取引完了メール送信開始', [
+                'sold_item_id' => $soldItem->id,
+                'to_email' => $soldItem->item->user->email,
+                'seller_name' => $soldItem->item->user->name,
+                'buyer_name' => $buyer->name,
+                'item_name' => $soldItem->item->name
+            ]);
+
+            Mail::to($soldItem->item->user->email)
+                ->send(new TransactionCompletedMail($soldItem, $buyer));
+
+            Log::info('取引完了メール送信完了');
+        } catch (\Exception $e) {
+            Log::error('取引完了メール送信失敗', [
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'sold_item_id' => $soldItem->id ?? 'unknown'
+            ]);
+        }
     }
 }

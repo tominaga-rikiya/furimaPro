@@ -56,7 +56,7 @@
                 
                 <div class="transaction-complete-action">
                     @if($soldItem->is_completed)
-                        @if($soldItem->rating)
+                        @if($soldItem->hasUserRated(auth()->id()))
                             <div class="already-rated">
                                 <span>評価完了</span>
                             </div>
@@ -175,3 +175,364 @@
                     <form action="{{ route('messages.store', $soldItem) }}" method="POST" enctype="multipart/form-data" id="message-form">
                         @csrf
                         @error('content')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                            @error('img_url')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        
+                        <div class="form-group">
+                            <input 
+                                type="text"
+                                name="content" 
+                                id="content" 
+                                class="form-control" 
+                                placeholder="取引メッセージを記入してください"
+                                value="{{ old('content') }}"
+                            >
+
+                            <label class="btn2" id="file-btn">
+                                画像を追加
+                                <input id="target" class="btn2--input" type="file" name="img_url" accept="image/*">
+                            </label>
+                            
+                            <div class="selected-file-info" id="selected-file-info"></div>
+
+                               <button type="submit" class="btn-send" id="send-btn"> <img src="{{ asset('img/send.png') }}" alt="送信アイコン" style="height:5%;"></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="rating-modal" class="rating-modal" style="display: none;">
+    <div class="rating-modal-content">
+        <div class="rating-modal-header">
+            <h2 class="rating-modal-title">取引が完了しました。</h2>
+        </div>
+        
+        <div class="rating-divider">
+            <p class="rating-modal-subtitle">今回の取引相手はどうでしたか？</p>
+        </div>
+
+        <form id="rating-form">
+            @csrf
+            
+            <div class="rating-form-group">
+                <div class="rating-stars" id="rating-stars">
+                    <span class="rating-star" data-rating="1">★</span>
+                    <span class="rating-star" data-rating="2">★</span>
+                    <span class="rating-star" data-rating="3">★</span>
+                    <span class="rating-star" data-rating="4">★</span>
+                    <span class="rating-star" data-rating="5">★</span>
+                </div>
+                <div class="rating-error" id="score-error" style="display: none;"></div>
+            </div>
+
+            <div class="rating-divider"></div>
+
+            <div class="rating-actions">
+                <button type="submit" class="rating-btn-submit" id="rating-submit-btn" disabled>送信する</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="image-modal" class="modal" style="display: none;" onclick="closeImageModal()">
+    <div class="modal-content">
+        <span class="close" onclick="closeImageModal()">&times;</span>
+        <img id="modal-image" src="" alt="拡大画像">
+    </div>
+</div>
+
+@endsection
+
+<script>
+    let selectedRating = 0;
+
+    function completeTransactionAndShowRating() {
+        openRatingModal();
+        
+        const completeBtn = document.querySelector('.complete-transaction-button');
+        if (completeBtn) {
+            completeBtn.disabled = true;
+            completeBtn.textContent = '評価待ち...';
+        }
+    }
+
+    function openRatingModal() {
+        document.getElementById('rating-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function resetRatingForm() {
+        selectedRating = 0;
+        document.querySelectorAll('.rating-star').forEach(star => {
+            star.classList.remove('active');
+        });
+        document.getElementById('rating-submit-btn').disabled = true;
+        
+        document.querySelectorAll('.rating-error').forEach(error => {
+            error.style.display = 'none';
+        });
+    }
+
+    function highlightStars(rating) {
+        document.querySelectorAll('.rating-star').forEach((star, index) => {
+            if (index < rating) {
+                star.style.color = '#ffd700';
+            } else {
+                star.style.color = '#ddd';
+            }
+        });
+    }
+
+    function updateStars() {
+        document.querySelectorAll('.rating-star').forEach((star, index) => {
+            if (index < selectedRating) {
+                star.classList.add('active');
+                star.style.color = '#ffd700';
+            } else {
+                star.classList.remove('active');
+                star.style.color = '#ddd';
+            }
+        });
+    }
+
+    function openImageModal(img) {
+        document.getElementById('modal-image').src = img.src;
+        document.getElementById('image-modal').style.display = 'block';
+    }
+
+    function closeImageModal() {
+        document.getElementById('image-modal').style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        @if($soldItem->is_completed && !$soldItem->hasUserRated(auth()->id()))
+            @if($soldItem->item->user_id === auth()->id())
+                setTimeout(function() {
+                    openRatingModal();
+                }, 100);
+            @endif
+        @endif
+        
+        document.querySelectorAll('.btn-edit').forEach(function(editBtn) {
+            editBtn.addEventListener('click', function(e) {
+                sessionStorage.setItem('chatScrollPosition', document.querySelector('.messages-area').scrollTop);
+            });
+        });
+        
+        const messagesArea = document.querySelector('.messages-area');
+        if (messagesArea) {
+            const savedScrollPosition = sessionStorage.getItem('chatScrollPosition');
+            if (savedScrollPosition) {
+                setTimeout(function() {
+                    messagesArea.scrollTop = parseInt(savedScrollPosition);
+                    sessionStorage.removeItem('chatScrollPosition');
+                }, 100);
+            }
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const editingMessageId = urlParams.get('edit');
+        if (editingMessageId && messagesArea) {
+            setTimeout(function() {
+                const editingMessage = document.getElementById('message-' + editingMessageId);
+                if (editingMessage) {
+                    editingMessage.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
+            }, 200);
+        }
+        
+        const fileInput = document.getElementById('target');
+        const fileBtn = document.getElementById('file-btn');
+        const selectedFileInfo = document.getElementById('selected-file-info');
+        
+        if (fileInput && fileBtn) {
+            fileInput.addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    const fileSize = Math.round(this.files[0].size / 1024);
+                    
+                    fileBtn.classList.add('file-selected');
+                    selectedFileInfo.textContent = `選択済み: ${fileName} (${fileSize}KB)`;
+                    selectedFileInfo.classList.add('show');
+                } else {
+                    fileBtn.classList.remove('file-selected');
+                    selectedFileInfo.classList.remove('show');
+                }
+            });
+        }
+        
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.querySelector('input[name="content"]');
+        
+        if (messageForm) {
+            messageForm.addEventListener('submit', function(e) {
+                setTimeout(function() {
+                    if (messageInput) messageInput.value = '';
+                    if (fileInput) {
+                        fileInput.value = '';
+                        fileBtn.classList.remove('file-selected');
+                        selectedFileInfo.classList.remove('show');
+                    }
+                    
+                    const transactionId = window.location.pathname.split('/').pop();
+                    const storageKey = `transaction_message_${transactionId}`;
+                    sessionStorage.removeItem(storageKey);
+                }, 100);
+            });
+        }
+        
+        if (messageInput) {
+            const transactionId = window.location.pathname.split('/').pop();
+            const storageKey = `transaction_message_${transactionId}`;
+            
+            const savedMessage = sessionStorage.getItem(storageKey);
+            if (savedMessage) {
+                messageInput.value = savedMessage;
+            }
+            
+            messageInput.addEventListener('input', function() {
+                const currentValue = this.value.trim();
+                if (currentValue) {
+                    sessionStorage.setItem(storageKey, currentValue);
+                } else {
+                    sessionStorage.removeItem(storageKey);
+                }
+            });
+            
+            window.addEventListener('beforeunload', function() {
+                const currentValue = messageInput.value.trim();
+                if (currentValue) {
+                    sessionStorage.setItem(storageKey, currentValue);
+                } else {
+                    sessionStorage.removeItem(storageKey);
+                }
+            });
+        }
+
+        document.querySelectorAll('.rating-star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                updateStars();
+                document.getElementById('rating-submit-btn').disabled = false;
+                document.getElementById('score-error').style.display = 'none';
+            });
+
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.dataset.rating);
+                highlightStars(rating);
+            });
+        });
+
+        document.getElementById('rating-stars').addEventListener('mouseleave', function() {
+            updateStars();
+        });
+
+        document.getElementById('rating-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (selectedRating === 0) {
+                document.getElementById('score-error').textContent = '評価を選択してください';
+                document.getElementById('score-error').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('rating-submit-btn').disabled = true;
+            document.getElementById('rating-submit-btn').textContent = '送信中...';
+
+            @if($soldItem->user_id === auth()->id() && !$soldItem->is_completed)
+                const completeFormData = new FormData();
+                completeFormData.append('_token', '{{ csrf_token() }}');
+                
+                fetch('{{ route("transactions.complete", $soldItem) }}', {
+                    method: 'POST',
+                    body: completeFormData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const ratingFormData = new FormData();
+                        ratingFormData.append('_token', '{{ csrf_token() }}');
+                        ratingFormData.append('score', selectedRating);
+
+                        return fetch('{{ route("ratings.store", $soldItem) }}', {
+                            method: 'POST',
+                            body: ratingFormData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                    } else {
+                        throw new Error(data.message || '取引完了に失敗しました');
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('取引が完了し、評価を送信しました');
+                        window.location.href = '/';
+                    } else {
+                        throw new Error(data.message || '評価送信に失敗しました');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message || '処理中にエラーが発生しました');
+                    
+                    document.getElementById('rating-submit-btn').disabled = false;
+                    document.getElementById('rating-submit-btn').textContent = '送信する';
+                    
+                    const completeBtn = document.querySelector('.complete-transaction-button');
+                    if (completeBtn) {
+                        completeBtn.disabled = false;
+                        completeBtn.textContent = '取引を完了する';
+                    }
+                });
+            @else
+                const ratingFormData = new FormData();
+                ratingFormData.append('_token', '{{ csrf_token() }}');
+                ratingFormData.append('score', selectedRating);
+
+                fetch('{{ route("ratings.store", $soldItem) }}', {
+                    method: 'POST',
+                    body: ratingFormData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('評価を送信しました');
+                        window.location.href = '/';
+                    } else {
+                        throw new Error(data.message || '評価送信に失敗しました');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message || '処理中にエラーが発生しました');
+                    
+                    document.getElementById('rating-submit-btn').disabled = false;
+                    document.getElementById('rating-submit-btn').textContent = '送信する';
+                });
+            @endif
+        });
+
+        document.getElementById('rating-modal').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+</script>

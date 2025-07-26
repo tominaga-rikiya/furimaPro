@@ -14,8 +14,8 @@ class RatingController extends Controller
     {
         $user = Auth::user();
 
-        $isPurchaser = $soldItem->user_id === $user->id; 
-        $isSeller = $soldItem->item->user_id === $user->id; 
+        $isPurchaser = $soldItem->user_id === $user->id;
+        $isSeller = $soldItem->item->user_id === $user->id;
 
         if (!$isPurchaser && !$isSeller) {
             return response()->json(['success' => false, 'message' => 'アクセス権限がありません'], 403);
@@ -25,7 +25,7 @@ class RatingController extends Controller
             return response()->json(['success' => false, 'message' => '取引が完了していません'], 400);
         }
 
-        if ($soldItem->rating) {
+        if ($soldItem->hasUserRated($user->id)) {
             return response()->json(['success' => false, 'message' => '既に評価済みです'], 400);
         }
 

@@ -103,6 +103,10 @@
                         </a>
                     </div>
                 @endforeach             
+            @else
+                <div class="no-transactions">
+                    <p>取引中の商品はありません</p>
+                </div>
             @endif
         </div>
     @endif
