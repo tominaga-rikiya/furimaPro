@@ -7,60 +7,44 @@ use App\Models\CategoryItem;
 
 class CategoryItemsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        $sneaker_categories = [1,5,9];
-        foreach($sneaker_categories as $sneaker_category){
-            CategoryItem::create([
-                'item_id' => 1,
-                'category_id' => $sneaker_category,
-            ]);
-        }
+        $params = [
+            ['item_id' => 1, 'category_id' => 1],
+            ['item_id' => 1, 'category_id' => 5],
+            ['item_id' => 2, 'category_id' => 2],
+            ['item_id' => 3, 'category_id' => 10],
+            ['item_id' => 4, 'category_id' => 1],
+            ['item_id' => 4, 'category_id' => 5],
+            ['item_id' => 5, 'category_id' => 2],
+            ['item_id' => 6, 'category_id' => 2],
+            ['item_id' => 7, 'category_id' => 1],
+            ['item_id' => 7, 'category_id' => 4],
+            ['item_id' => 8, 'category_id' => 3],
+            ['item_id' => 8, 'category_id' => 10],
+            ['item_id' => 9, 'category_id' => 3],
+            ['item_id' => 9, 'category_id' => 10],
+            ['item_id' => 10, 'category_id' => 6],
+            ['item_id' => 10, 'category_id' => 4],
+            ['item_id' => 11, 'category_id' => 1],
+            ['item_id' => 11, 'category_id' => 5],
+            ['item_id' => 11, 'category_id' => 9],
+            ['item_id' => 12, 'category_id' => 1],
+            ['item_id' => 12, 'category_id' => 4],
+            ['item_id' => 13, 'category_id' => 1],
+            ['item_id' => 13, 'category_id' => 12],
+            ['item_id' => 14, 'category_id' => 2],
+            ['item_id' => 14, 'category_id' => 3],
+            ['item_id' => 15, 'category_id' => 1],
+            ['item_id' => 15, 'category_id' => 5],
+            ['item_id' => 15, 'category_id' => 12],
+            ['item_id' => 16, 'category_id' => 1],
+            ['item_id' => 16, 'category_id' => 4],
+            ['item_id' => 16, 'category_id' => 12],
+        ];
 
-        $hat_categories = [1,4];
-        foreach($hat_categories as $hat_category){
-            CategoryItem::create([
-                'item_id' => 2,
-                'category_id' => $hat_category,
-            ]);
-        }
-
-        $glasses_categories = [1,12];
-        foreach ($glasses_categories as $glasses_category) {
-            CategoryItem::create([
-                'item_id' => 3,
-                'category_id' => $glasses_category,
-            ]);
-        }
-
-        $tv_categories = [2,3];
-        foreach ($tv_categories as $tv_category) {
-            CategoryItem::create([
-                'item_id' => 4,
-                'category_id' => $tv_category,
-            ]);
-        }
-
-
-        $wallet_categories = [1,5,12];
-        foreach ($wallet_categories as $wallet_category) {
-            CategoryItem::create([
-                'item_id' => 5,
-                'category_id' => $wallet_category,
-            ]);
-        }
-
-        $earrings_categories = [1,4,12];
-        foreach ($earrings_categories as $earrings_category) {
-            CategoryItem::create([
-                'item_id' => 6,
-                'category_id' => $earrings_category,
-            ]);
+        foreach ($params as $param) {
+            CategoryItem::create($param);
         }
     }
 }

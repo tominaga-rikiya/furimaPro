@@ -95,32 +95,17 @@ STRIPE_PUBLIC_KEY="パブリックキー"
 STRIPE_SECRET_KEY="シークレットキー"
 ```
 
-## ER図
-![alt](ER.png)
-
 ## テストアカウント
-name: 一般ユーザ  
+name: 一般ユーザ1 
 email: general1@gmail.com  
 password: password  
 -------------------------
-name: 一般ユーザ  
+name: 一般ユーザ2 
 email: general2@gmail.com  
 password: password  
 -------------------------
-
-## PHPUnitを利用したテストに関して
-以下のコマンド:  
-```
-//テスト用データベースの作成
-docker-compose exec mysql bash
-mysql -u root -p
-//パスワードはrootと入力
-create database test_database;
-
-docker-compose exec php bash
-php artisan migrate:fresh --env=testing
-./vendor/bin/phpunit
-```
-※.env.testingにもStripeのAPIキーを設定してください。  
-
+name: 一般ユーザ3(紐づけなし)
+email: general3@gmail.com  
+password: password  
+-------------------------
 # furimaPro

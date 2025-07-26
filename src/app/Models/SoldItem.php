@@ -24,37 +24,31 @@ class SoldItem extends Model
         'completed_at' => 'datetime',
     ];
 
-    // 購入者のリレーション
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // 商品のリレーション
     public function item()
     {
         return $this->belongsTo(Item::class);
     }
 
-    // メッセージのリレーション
     public function messages()
     {
         return $this->hasMany(Message::class, 'sold_item_id');
     }
 
-    // 最新メッセージのリレーション
     public function latestMessage()
     {
         return $this->hasOne(Message::class, 'sold_item_id')->latest();
     }
 
-    // 評価のリレーション
     public function rating()
     {
         return $this->hasOne(Rating::class);
     }
 
-    // 未読メッセージ数を取得（特定ユーザー向け）
     public function unreadMessagesCount($userId)
     {
         return $this->messages()
@@ -63,18 +57,14 @@ class SoldItem extends Model
             ->count();
     }
 
-    // 取引に関わっているかチェック
     public function isUserInTransaction($userId)
     {
         return $this->user_id === $userId || $this->item->user_id === $userId;
     }
 
-    // 最新メッセージの日時を取得（アクセサー）
     public function getLastMessageAtAttribute()
     {
         $message = $this->messages()->latest()->first();
         return $message ? $message->created_at : null;
     }
-
-    
 }

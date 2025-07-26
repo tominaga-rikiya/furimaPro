@@ -14,25 +14,21 @@ class RatingController extends Controller
     {
         $user = Auth::user();
 
-        // 取引参加者かチェック（直接チェック）
-        $isPurchaser = $soldItem->user_id === $user->id; // 購入者かチェック
-        $isSeller = $soldItem->item->user_id === $user->id; // 出品者かチェック
+        $isPurchaser = $soldItem->user_id === $user->id; 
+        $isSeller = $soldItem->item->user_id === $user->id; 
 
         if (!$isPurchaser && !$isSeller) {
             return response()->json(['success' => false, 'message' => 'アクセス権限がありません'], 403);
         }
 
-        // 取引完了済みかチェック
         if (!$soldItem->is_completed) {
             return response()->json(['success' => false, 'message' => '取引が完了していません'], 400);
         }
 
-        // 既に評価済みかチェック
         if ($soldItem->rating) {
             return response()->json(['success' => false, 'message' => '既に評価済みです'], 400);
         }
 
-        // 評価対象ユーザーを決定
         $toUserId = $isPurchaser ? $soldItem->item->user_id : $soldItem->user_id;
 
         try {

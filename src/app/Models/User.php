@@ -82,14 +82,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Setting::class);
     }
 
-    // 平均評価を取得するメソッド
     public function getAverageRatingAttribute()
     {
         $average = $this->receivedRatings()->avg('score');
         return $average ? round($average) : null;
     }
 
-    // 評価数を取得するメソッド
     public function getRatingCountAttribute()
     {
         return $this->receivedRatings()->count();

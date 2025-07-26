@@ -1,14 +1,11 @@
 @extends('layouts.default')
 
-<!-- タイトル -->
 @section('title','プロフィール設定')
 
-<!-- css読み込み -->
 @section('css')
 <link rel="stylesheet" href="{{ asset('/css/profile.css')  }}" >
 @endsection
 
-<!-- 本体 -->
 @section('content')
 
 @include('components.header')

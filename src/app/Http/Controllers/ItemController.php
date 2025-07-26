@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Storage;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ItemRequest;
@@ -60,7 +60,6 @@ class ItemController extends Controller
         $img = $request->file('img_url');
         
         try {
-            //code...
             $img_url = Storage::disk('local')->put('public/img', $img);
         } catch (\Throwable $th) {
             throw $th;

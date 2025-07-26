@@ -3,54 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>商品購入のお知らせ</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            margin: 0; 
-            padding: 0; 
-        }
-        .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            background: white; 
-        }
-        .header { 
-            background: #28a745; 
-            color: white; 
-            padding: 20px; 
-            text-align: center; 
-        }
-        .content { 
-            padding: 30px 20px; 
-        }
-        .item-box { 
-            background: #f8f9fa; 
-            border: 1px solid #dee2e6; 
-            border-radius: 8px; 
-            padding: 20px; 
-            margin: 20px 0; 
-        }
-        .price { 
-            font-size: 24px; 
-            font-weight: bold; 
-            color: #dc3545; 
-            margin: 10px 0; 
-        }
-        .buyer-info { 
-            background: #e3f2fd; 
-            padding: 15px; 
-            border-radius: 5px; 
-            margin: 15px 0; 
-        }
-        .footer { 
-            background: #f8f9fa; 
-            padding: 20px; 
-            text-align: center; 
-            color: #666; 
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/email.css') }}">
 </head>
 <body>
     <div class="container">

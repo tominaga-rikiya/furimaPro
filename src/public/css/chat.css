@@ -1,4 +1,3 @@
-/* チャットメッセージエリア */
 .messages-area {
     flex: 1;
     padding: 20px 25px;
@@ -9,7 +8,6 @@
     box-sizing: border-box;
 }
 
-/* 取引チャット専用CSS - フルスクリーンレイアウト */
 .chat-container {
     max-width: none;
     width: 100%;
@@ -27,12 +25,10 @@
     gap: 0;
     flex: 1;
     height: calc(100vh - 60px);
-    /* ヘッダー分を引いてフルハイト */
     position: relative;
     overflow: hidden;
 }
 
-/* サイドバー：他の取引（左側縦並び配置） */
 .sidebar {
     background: #868686;
     padding: 0;
@@ -64,7 +60,6 @@ header {
     position: relative;
 }
 
-/* 取引項目を縦並びに配置 */
 .transactions-grid {
     display: flex;
     flex-direction: column;
@@ -100,7 +95,6 @@ header {
     background: #f8f9fa;
 }
 
-/* 画像コンテナ（バッジ用の相対位置） */
 .transaction-image-container {
     position: relative;
     flex-shrink: 0;
@@ -133,7 +127,6 @@ header {
     -webkit-box-orient: vertical;
 }
 
-/* 未読バッジを画像の右上に配置 */
 .unread-badge {
     position: absolute;
     top: -5px;
@@ -165,7 +158,6 @@ header {
     color: #999;
 }
 
-/* アクティブな取引項目（現在表示中の取引） */
 .other-transaction.active .transaction-item {
     background: #e6f3ff;
     border-left: 4px solid #0066cc;
@@ -177,7 +169,6 @@ header {
     font-weight: 600;
 }
 
-/* メインチャットエリア */
 .chat-main {
     background: white;
     display: flex;
@@ -190,7 +181,6 @@ header {
     z-index: 1;
 }
 
-/* 取引タイトルヘッダー */
 .transaction-title-header {
     padding: 20px 25px;
     background: #ffffff;
@@ -242,7 +232,6 @@ header {
     justify-content: center;
 }
 
-
 .transaction-title {
     font-size: 18px;
     font-weight: 600;
@@ -270,8 +259,6 @@ header {
     transition: background 0.2s ease;
 }
 
-
-
 .rating-button {
     background: #ff9800;
     color: white;
@@ -295,7 +282,6 @@ header {
     white-space: nowrap;
 }
 
-/* 商品ヘッダー */
 .product-header {
     padding: 20px 25px;
     border-bottom: 1px solid #e0e0e0;
@@ -344,7 +330,6 @@ header {
     color: #ff6b35;
 }
 
-/* メッセージ全体のコンテナ */
 .message {
     margin-bottom: 20px;
     display: flex;
@@ -359,14 +344,12 @@ header {
     align-items: flex-start;
 }
 
-/* メッセージコンテナ（ヘッダー + バブル） */
 .message-container {
     max-width: 65%;
     display: flex;
     flex-direction: column;
 }
 
-/* メッセージのヘッダー部分（アイコン・ユーザー名） */
 .message-header {
     display: flex;
     align-items: center;
@@ -374,7 +357,6 @@ header {
     margin-bottom: 5px;
     padding: 8px 12px;
 }
-
 
 .message-user-avatar {
     width: 24px;
@@ -407,7 +389,6 @@ header {
     align-items: center;
     justify-content: center;
 }
-
 
 .message-username {
     font-size: 13px;
@@ -466,7 +447,6 @@ header {
     font-weight: 500;
 }
 
-/* メッセージアクションボタン */
 .message-actions {
     margin-top: 8px;
     display: flex;
@@ -511,7 +491,6 @@ header {
     color: #5F5F5F;
 }
 
-/* 編集モード */
 .edit-message-form {
     width: 100%;
 }
@@ -566,14 +545,12 @@ header {
     margin-top: 1rem;
     display: flex;
     gap: 0.5rem;
-    
 }
 
 .form-group {
     margin-bottom: 0.75rem;
 }
 
-/* メッセージ入力フォーム */
 .message-form {
     padding: 20px 25px;
     flex-shrink: 0;
@@ -650,7 +627,6 @@ header {
     margin-bottom: 1rem;
 }
 
-/* 評価モーダル */
 .rating-modal {
     position: fixed;
     top: 0;
@@ -718,7 +694,6 @@ header {
     font-weight: bold;
     color: #333;
     padding: 10px 8px;
-
 }
 
 .rating-modal-subtitle {
@@ -726,8 +701,6 @@ header {
     font-size: 14px;
     margin: 0;
 }
-
-
 
 .rating-form-group {
     padding: 0;
@@ -779,7 +752,6 @@ header {
     cursor: not-allowed;
 }
 
-/* 画像モーダル */
 .modal {
     position: fixed;
     z-index: 1000;
@@ -846,10 +818,10 @@ header {
 }
 
 @media (max-width: 768px) {
-
-    .sidebar{
+    .sidebar {
         width: 250px;
     }
+
     .sidebar h3 {
         font-size: 14px;
     }
@@ -902,7 +874,6 @@ header {
         font-size: 15px;
     }
 
-    /* 小画面でのフォーム調整 */
     .btn2 {
         padding: 12px 8px;
         font-size: 10px;
@@ -917,6 +888,3 @@ header {
         width: 12px;
     }
 }
-
-
-

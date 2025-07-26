@@ -132,8 +132,6 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-
-
 .item__img--container {
     position: relative;
     width: 100%;

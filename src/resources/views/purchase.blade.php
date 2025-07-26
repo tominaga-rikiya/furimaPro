@@ -1,14 +1,11 @@
 @extends('layouts.default')
 
-<!-- タイトル -->
 @section('title','購入手続き')
 
-<!-- css読み込み -->
 @section('css')
 <link rel="stylesheet" href="{{ asset('/css/purchase.css')  }}">
 @endsection
 
-<!-- 本体 -->
 @section('content')
 
 @include('components.header')
