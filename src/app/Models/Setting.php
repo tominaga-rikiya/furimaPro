@@ -5,16 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Profile extends Model
+class Setting extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'user_id',
-        'img_url', 
-        'postcode', 
-        'address', 
-        'building', 
+        'email_complete',
+        'email_message'
+    ];
+
+    protected $casts = [
+        'email_complete' => 'boolean',
+        'email_message' => 'boolean',
     ];
 
     public function user()

@@ -30,10 +30,8 @@
 }
 
 .item__img--container{
-    background-color: rgb(208, 208, 208);
     border-radius: 5px;
     width: 15em;
-    height: 15em;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,7 +61,7 @@
 }
 
 .border__list li{
-    padding: 20px 80px;
+    padding: 10px 60px;
     font-weight: bold;
 }
 

@@ -14,6 +14,6 @@ class Category extends Model
 
     public function categoryItem()
     {
-        return $this->hasMany('App\Models\CategoryItem');
+        return $this->hasMany(CategoryItem::class);
     }
 }

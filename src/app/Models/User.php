@@ -44,21 +44,54 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function profile()
     {
-        return $this->hasOne('App\Models\Profile');
+        return $this->hasOne(Profile::class);
     }
 
     public function likes()
     {
-        return $this->hasMany('App\Models\Like');
+        return $this->hasMany(Like::class);
     }
 
     public function comments()
     {
-        return $this->hasMany('App\Models\Comment');
+        return $this->hasMany(Comment::class);
     }  
 
     public function items()
     {
-        return $this->hasMany('App\Models\Item');
-    }  
+        return $this->hasMany(Item::class);
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function givenRatings()
+    {
+        return $this->hasMany(Rating::class, 'from_user_id');
+    }
+
+    public function receivedRatings()
+    {
+        return $this->hasMany(Rating::class, 'to_user_id');
+    }
+
+    public function setting()
+    {
+        return $this->hasOne(Setting::class);
+    }
+
+    // 平均評価を取得するメソッド
+    public function getAverageRatingAttribute()
+    {
+        $average = $this->receivedRatings()->avg('score');
+        return $average ? round($average) : null;
+    }
+
+    // 評価数を取得するメソッド
+    public function getRatingCountAttribute()
+    {
+        return $this->receivedRatings()->count();
+    }
 }

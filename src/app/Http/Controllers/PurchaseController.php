@@ -5,22 +5,26 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\AddressRequest;
 use App\Models\Item;
 use App\Models\User;
 use App\Models\SoldItem;
 use App\Models\Profile;
+use App\Mail\PurchaseNotificationMail;
 use Stripe\StripeClient;
 
 class PurchaseController extends Controller
 {
-    public function index($item_id, Request $request){
+    public function index($item_id, Request $request)
+    {
         $item = Item::find($item_id);
         $user = User::find(Auth::id());
-        return view('purchase',compact('item','user'));
+        return view('purchase', compact('item', 'user'));
     }
 
-    public function purchase($item_id, Request $request){
+    public function purchase($item_id, Request $request)
+    {
         $item = Item::find($item_id);
         $stripe = new StripeClient(config('stripe.stripe_secret_key'));
 
@@ -63,37 +67,52 @@ class PurchaseController extends Controller
         return redirect($checkout_session->url);
     }
 
-    public function success($item_id, Request $request){
+    public function success($item_id, Request $request)
+    {
         //無事決済が成功した後に動くメソッドのため、決済以外でHTTPリクエストが送られた時用にクエリパラメータを検閲
-        if(!$request->user_id || !$request->amount || !$request->sending_postcode || !$request->sending_address){
+        if (!$request->user_id || !$request->amount || !$request->sending_postcode || !$request->sending_address) {
             throw new Exception("You need all Query Parameters (user_id, amount, sending_postcode, sending_address)");
         }
 
-        $stripe = new StripeClient(config('stripe.stripe_secret_key'));
+        // $stripe = new StripeClient(config('stripe.stripe_secret_key'));
 
-        $stripe->charges->create([
-            'amount' => $request->amount,
-            'currency' => 'jpy',
-            'source' => 'tok_visa',
-        ]);
+        // $stripe->charges->create([
+        //     'amount' => $request->amount,
+        //     'currency' => 'jpy',
+        //     'source' => 'tok_visa',
+        // ]);
 
-        SoldItem::create([
+        $soldItem = SoldItem::create([
             'user_id' => $request->user_id,
             'item_id' => $item_id,
             'sending_postcode' => $request->sending_postcode,
-            'sending_address' => $request->sending_address,
-            'sending_building' => $request->sending_building ?? null,
+            'sending_address' => urldecode($request->sending_address), 
+            'sending_building' => $request->sending_building ? urldecode($request->sending_building) : null,
         ]);
+
+        // メール送信機能追加
+        try {
+            $item = Item::find($item_id);
+            $buyer = User::find($request->user_id);
+
+            // 出品者にメール送信
+            Mail::to($item->user->email)->send(new PurchaseNotificationMail($item, $buyer));
+        } catch (\Exception $e) {
+            // メール送信に失敗しても決済処理は継続
+            \Log::error('Purchase notification mail failed: ' . $e->getMessage());
+        }
 
         return redirect('/')->with('flashSuccess', '決済が完了しました！');
     }
 
-    public function address($item_id, Request $request){
+    public function address($item_id, Request $request)
+    {
         $user = User::find(Auth::id());
-        return view('address', compact('user','item_id'));
+        return view('address', compact('user', 'item_id'));
     }
 
-    public function updateAddress(AddressRequest $request){
+    public function updateAddress(AddressRequest $request)
+    {
 
         $user = User::find(Auth::id());
         Profile::where('user_id', $user->id)->update([
