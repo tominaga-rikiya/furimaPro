@@ -51,9 +51,19 @@ php artisan db:seed
 ``` bash
 php artisan storage:link
 ```
+
 9. 画像表示
+``` bash
 mkdir ./src/storage/app/public/img
 mv ./src/public/img/copy_storage_img/*.jpg ./src/storage/app/public/img
+```
+
+10. Laravel Mix（JS・CSSビルド）のセットアップ
+``` bash
+npm install
+npm run dev
+```
+
 
 *http://localhostで権限によるエラーが発生する場合はstorage/logs/laravel.logの権限を変更*
 ``` bash
@@ -71,6 +81,8 @@ docker-compose up -d
 - PHP8.3.0
 - Laravel8.83.27
 - MySQL8.0.26
+- Node.js: v18.20.8
+- npm: 10.8.2
 
 ## URL
 - 開発環境：http://localhost/
@@ -110,4 +122,4 @@ password: password
 -------------------------
 
 ## ER図
-![alt](ER.png)
+![ER図](ER.png)

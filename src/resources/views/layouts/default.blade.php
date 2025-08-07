@@ -31,6 +31,8 @@
         toastr.success("{{ session('flashSuccess') }}");
         @endif
     </script>
+
+    <script src="{{ mix('js/app.js') }}"></script>
 </body>
 
 </html>
