@@ -28,3 +28,7 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+!storage/app/public/img/
+!storage/app/public/img/*.jpg
+!storage/app/public/img/*.png
