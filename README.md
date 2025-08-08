@@ -52,18 +52,11 @@ php artisan db:seed
 php artisan storage:link
 ```
 
-9. 画像表示
-``` bash
-mkdir ./src/storage/app/public/img
-mv ./src/public/img/copy_storage_img/*.jpg ./src/storage/app/public/img
-```
-
-10. Laravel Mix（JS・CSSビルド）のセットアップ
+9. Laravel Mix（JS・CSSビルド）のセットアップ
 ``` bash
 npm install
 npm run dev
 ```
-
 
 *http://localhostで権限によるエラーが発生する場合はstorage/logs/laravel.logの権限を変更*
 ``` bash
