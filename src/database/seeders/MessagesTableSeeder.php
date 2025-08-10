@@ -4,59 +4,35 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Message;
-use Carbon\Carbon;
+use App\Models\SoldItem;
 
 class MessagesTableSeeder extends Seeder
 {
     public function run()
     {
-        $params = [
-            [
-                'sold_item_id' => 1,
-                'user_id' => 1,
-                'content' => 'こんにちは。HDDを購入させていただきました。よろしくお願いします。',
-                'is_read' => true,
-                'created_at' => Carbon::now()->subDays(9),
-            ],
-            [
-                'sold_item_id' => 1,
-                'user_id' => 2,
-                'content' => 'ご購入ありがとうございます。明日発送予定です。',
-                'is_read' => true,
-                'created_at' => Carbon::now()->subDays(9),
-            ],
-            [
-                'sold_item_id' => 1,
-                'user_id' => 2,
-                'content' => '発送が完了しました。追跡番号は123456789です。',
-                'is_read' => true,
-                'created_at' => Carbon::now()->subDays(8),
-            ],
-            [
-                'sold_item_id' => 1,
-                'user_id' => 1,
-                'content' => '商品を受け取りました。ありがとうございました！',
-                'is_read' => true,
-                'created_at' => Carbon::now()->subDays(7),
-            ],
-            [
-                'sold_item_id' => 2,
-                'user_id' => 2,
-                'content' => 'ショルダーバッグを購入しました。発送をお願いします。',
-                'is_read' => true,
-                'created_at' => Carbon::now()->subDays(3),
-            ],
-            [
-                'sold_item_id' => 2,
-                'user_id' => 1,
-                'content' => 'ご購入ありがとうございます。本日発送いたします。',
-                'is_read' => false,
-                'created_at' => Carbon::now()->subDays(2),
-            ],
-        ];
+        $soldItems = SoldItem::with(['item.user', 'user'])->get();
 
-        foreach ($params as $param) {
-            Message::create($param);
+        foreach ($soldItems as $soldItem) {
+            $buyerId = $soldItem->user_id;        
+            $sellerId = $soldItem->item->user_id; 
+
+            Message::create([
+                'sold_item_id' => $soldItem->id,
+                'user_id' => $buyerId,
+                'content' => 'はじめまして。こちらの商品を購入させていただきました。',
+                'is_read' => false,
+                'created_at' => now()->subHours(rand(1, 48)),
+                'updated_at' => now()->subHours(rand(1, 48)),
+            ]);
+
+            Message::create([
+                'sold_item_id' => $soldItem->id,
+                'user_id' => $sellerId,
+                'content' => 'ご購入ありがとうございます。発送準備をいたします。',
+                'is_read' => true,
+                'created_at' => now()->subHours(rand(1, 24)),
+                'updated_at' => now()->subHours(rand(1, 24)),
+            ]);
         }
     }
 }

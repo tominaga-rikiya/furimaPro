@@ -18,7 +18,7 @@ class ItemsTableSeeder extends Seeder
                 'brand' => 'Rolax',
                 'description' => 'スタイリッシュなデザインのメンズ腕時計',
                 'img_url' => 'public/img/mens_clock.jpg',
-                'user_id' => 2,
+                'user_id' => 1, 
                 'condition_id' => 1,
             ],
             [
@@ -81,7 +81,7 @@ class ItemsTableSeeder extends Seeder
                 'brand' => '',
                 'description' => '使いやすいタンブラー',
                 'img_url' => 'public/img/tumbler.jpg',
-                'user_id' => 1,
+                'user_id' => 2, 
                 'condition_id' => 4,
             ],
             [
@@ -111,11 +111,15 @@ class ItemsTableSeeder extends Seeder
 
         Like::create([
             'user_id' => 1,
-            'item_id' => 1,
+            'item_id' => 5,  
         ]);
         Like::create([
             'user_id' => 2,
-            'item_id' => 6,
+            'item_id' => 9,  
+        ]);
+        Like::create([
+            'user_id' => 1,
+            'item_id' => 3,  
         ]);
     }
 }

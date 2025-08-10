@@ -1,4 +1,3 @@
-// public/js/transaction-chat.js
 class TransactionChat {
     constructor(config) {
         this.selectedRating = 0;
@@ -17,7 +16,6 @@ class TransactionChat {
         this.initModalClickHandler();
     }
 
-    // 星評価システム
     initRatingSystem() {
         const ratingStars = document.querySelectorAll('.rating-star');
         const ratingForm = document.getElementById('rating-form');
@@ -174,7 +172,6 @@ class TransactionChat {
         }
     }
 
-    // ファイルアップロード
     initFileUpload() {
         const fileInput = document.getElementById('target');
         const fileBtn = document.getElementById('file-btn');
@@ -197,7 +194,6 @@ class TransactionChat {
         }
     }
 
-    // メッセージフォーム
     initMessageForm() {
         const messageForm = document.getElementById('message-form');
         const messageInput = document.querySelector('input[name="content"]');
@@ -222,7 +218,6 @@ class TransactionChat {
             });
         }
 
-        // メッセージの自動保存
         if (messageInput) {
             const transactionId = window.location.pathname.split('/').pop();
             const storageKey = `transaction_message_${transactionId}`;
@@ -252,12 +247,10 @@ class TransactionChat {
         }
     }
 
-    // スクロール管理
     initScrollManagement() {
         const messagesArea = document.querySelector('.messages-area');
         
         if (messagesArea) {
-            // 保存されたスクロール位置を復元
             const savedScrollPosition = sessionStorage.getItem('chatScrollPosition');
             if (savedScrollPosition) {
                 setTimeout(function() {
@@ -266,7 +259,6 @@ class TransactionChat {
                 }, 100);
             }
 
-            // 編集中メッセージにスクロール
             const urlParams = new URLSearchParams(window.location.search);
             const editingMessageId = urlParams.get('edit');
             if (editingMessageId) {
@@ -283,7 +275,6 @@ class TransactionChat {
         }
     }
 
-    // 編集アクション
     initEditActions() {
         document.querySelectorAll('.btn-edit').forEach(function(editBtn) {
             editBtn.addEventListener('click', function(e) {
@@ -295,7 +286,6 @@ class TransactionChat {
         });
     }
 
-    // 画像モーダル（グローバル関数として公開）
     initImageModal() {
         window.openImageModal = function(img) {
             const modalImage = document.getElementById('modal-image');
@@ -315,7 +305,6 @@ class TransactionChat {
         };
     }
 
-    // モーダル関連（グローバル関数として公開）
     openRatingModal() {
         const ratingModal = document.getElementById('rating-modal');
         if (ratingModal) {
@@ -334,7 +323,6 @@ class TransactionChat {
         }
     }
 
-    // 自動評価モーダル開示
     checkAutoOpenRating() {
         if (this.config.shouldAutoOpenRating) {
             setTimeout(() => {
@@ -343,7 +331,6 @@ class TransactionChat {
         }
     }
 
-    // モーダルクリックハンドラー
     initModalClickHandler() {
         const ratingModal = document.getElementById('rating-modal');
         if (ratingModal) {
@@ -354,7 +341,6 @@ class TransactionChat {
     }
 }
 
-// グローバル関数として公開（HTML onclick属性から呼ばれるため）
 window.completeTransactionAndShowRating = function() {
     if (window.transactionChatInstance) {
         window.transactionChatInstance.completeTransactionAndShowRating();

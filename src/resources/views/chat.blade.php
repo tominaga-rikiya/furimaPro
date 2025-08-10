@@ -253,7 +253,6 @@
 <script src="{{ asset('js/chat.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 設定データをJavaScriptに渡す
     const config = {
         csrfToken: '{{ csrf_token() }}',
         routes: {
@@ -264,7 +263,6 @@ document.addEventListener('DOMContentLoaded', function() {
         needsCompletion: @json($soldItem->user_id === auth()->id() && !$soldItem->is_completed)
     };
     
-    // TransactionChatクラスを初期化
     window.transactionChatInstance = new TransactionChat(config);
 });
 </script>

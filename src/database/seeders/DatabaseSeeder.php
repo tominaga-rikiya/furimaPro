@@ -23,8 +23,6 @@ class DatabaseSeeder extends Seeder
             CommentsTableSeeder::class,
             SoldItemsTableSeeder::class,
             MessagesTableSeeder::class,
-            RatingsTableSeeder::class,
-            SettingsTableSeeder::class,
         ]);
     }
 }
