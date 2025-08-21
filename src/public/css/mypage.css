@@ -91,23 +91,22 @@
 }
 
 .border__list li a.active {
-    color: #ff4757;
+    color: #FF0000;
     font-weight: bold;
 }
 
 .tab-notification {
     display: inline-block;
-    background-color: #ff4757;
-    color: white;
-    border-radius: 10px;
-    padding: 2px 6px;
-    font-size: 11px;
-    font-weight: bold;
+    background-color: #FF0000;
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-weight: 700;
     margin-left: 4px;
-    min-width: 16px;
+    width: 24px;
     text-align: center;
-    line-height: 1.2;
+    line-height: 20px;
     vertical-align: top;
+    font-family: Inter, sans-serif;
 }
 
 .tab-notification.large-count {

@@ -1,3 +1,19 @@
+.tab-notification {
+    display: inline-block;
+    background-color: #FF0000;
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-left: 4px;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    vertical-align: top;
+    font-family: Inter, sans-serif;
+}
+
 .messages-area {
     flex: 1;
     padding: 20px 25px;
@@ -448,14 +464,19 @@ header {
 }
 
 .message-actions {
-    margin-top: 8px;
+    margin-top: 5px;
     display: flex;
     gap: 8px;
-    justify-content: center;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .message.own .message-actions {
-    justify-content: center;
+    justify-content: flex-end;
+}
+
+.message.other .message-actions {
+    justify-content: flex-start;
 }
 
 .btn-edit,
@@ -800,27 +821,42 @@ header {
     right: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .sidebar {
-        width: 250px;
-    }
-
-    .sidebar h3 {
-        font-size: 14px;
+        width: 280px;
     }
 
     .transaction-item {
-        min-width: 180px;
-        padding: 10px 12px;
+        padding: 12px 15px;
     }
 
     .transaction-image {
-        width: 50px;
-        height: 50px;
+        width: 55px;
+        height: 55px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 180px;
+    }
+
+    .sidebar h3 {
+        font-size: 13px;
+        padding: 12px 8px;
+    }
+
+    .transaction-item {
+        padding: 8px 10px;
+    }
+
+    .transaction-image {
+        width: 40px;
+        height: 40px;
     }
 
     .transaction-item-name {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .messages-area {
@@ -833,19 +869,15 @@ header {
 
     .transaction-title-header {
         padding: 12px 15px;
+        min-height: 60px;
     }
 
     .product-header {
         padding: 12px 15px;
     }
 
-    .message-user-avatar {
-        width: 24px;
-        height: 24px;
-    }
-
-    .message-username {
-        font-size: 10px;
+    .message-container {
+        max-width: 90%;
     }
 
     .partner-avatar {
@@ -857,17 +889,25 @@ header {
         font-size: 15px;
     }
 
-    .btn2 {
-        padding: 12px 8px;
-        font-size: 10px;
-    }
-
     .btn-send {
-        padding: 12px 12px;
+        padding: 8px 12px;
+        font-size: 13px;
     }
 
-    .btn-send img {
-        height: 12px;
-        width: 12px;
+    .tab-notification {
+        width: 15px;
+        height: 15px;
+        font-size: 10px;
+        line-height: 15px;
+    }
+
+    .message-bubble {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .form-control {
+        padding: 8px 12px;
+        font-size: 13px;
     }
 }

@@ -52,7 +52,7 @@ php artisan db:seed
 php artisan storage:link
 ```
 
-9. Laravel Mix（JS・CSSビルド）のセットアップ
+9. Laravel Mix（JS・CSSビルド）のセットアップ(srcのディレクトリで)
 ``` bash
 npm install
 npm run dev
@@ -87,9 +87,9 @@ mailtrapというツールを使用しています。<br>
 以下のリンクから会員登録をしてください。　<br>
 https://mailtrap.io/
 
-メールボックスのIntegrationsから 「laravel 7.x and 8.x」を選択し、　<br>
-.envファイルのMAIL_MAILERからMAIL_ENCRYPTIONまでの項目をコピー＆ペーストしてください。　<br>
-MAIL_FROM_ADDRESSは任意のメールアドレスを入力してください。　
+左側のサイドバーのsandboxesを押す
+メールボックスのIntegrationsからphpの「laravel 7.x and 8.x」を選択し、　<br>
+.envファイルのMAIL_MAILERからMAIL_ENCRYPTIONまでの項目をコピー＆ペーストしてください。　<br>　
 
 ## Stripeについて
 コンビニ支払いとカード支払いのオプションがありますが、決済画面にてコンビニ支払いを選択しますと、レシートを印刷する画面に遷移します。そのため、カード支払いを成功させた場合に意図する画面遷移が行える想定です。<br>
